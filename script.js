@@ -106,7 +106,7 @@ console.log(result);
 */
 function getLearnerData(course, assignmentGroup, submissions) {
     try {
-      // Validate the assignment group's course ID
+      // Check the assignment group's course ID
       if (course.id !== assignmentGroup.course_id) {
         throw new Error("Assignment group's course ID does not match the course ID.");
       }
