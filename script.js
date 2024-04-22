@@ -106,10 +106,14 @@ console.log(result);
 */
 function getLearnerData(course, assignmentGroup, submissions) {
     try {
-      // see if course ID matches the assignment group's course ID
+      // course ID matches the assignment group's course ID ?
       if (course.id !== assignmentGroup.course_id) {
         throw new Error("The course ID does not match the assignment group's course ID.");
       }
   
-      const currentDate = new Date(); // stores current date to compare with assignment due dates
-      let learnersData = []; // stores final results
+      const currentDate = new Date(); // current date vs assignment due dates
+      let learnersData = []; // results
+      
+//let's check the date next
+const currentDate = new Date(); // current date vs assignment due dates
+let learnersData = []; //results
