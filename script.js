@@ -128,8 +128,19 @@ for (let submission of submissions) {
       continue; // if no matching assignment found skip to next
     }
     const dueDate = new Date(assignment.due_at);
-    // is assignment is due?
+    // is assignment is due? see assignment.due_at
     if (dueDate > currentDate) {
       console.log("Assignment", assignment.id, "is not due yet.");
       continue; // if the assignment is not due yet skip
     }
+ // create a new entry if you can't find existing learner data
+ let learnerData = learnersData.find(ld => ld.id === submission.learner_id);
+ if (!learnerData) {
+   learnerData = {
+     id: submission.learner_id,
+     avg: 0,
+     totalWeightedScore: 0,
+     totalWeightedPossible: 0
+   };
+   learnersData.push(learnerData);
+ }
