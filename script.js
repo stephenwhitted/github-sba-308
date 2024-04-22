@@ -113,7 +113,17 @@ function getLearnerData(course, assignmentGroup, submissions) {
   
       const currentDate = new Date(); // current date vs assignment due dates
       let learnersData = []; // results
-      
+
 //let's check the date next
 const currentDate = new Date(); // current date vs assignment due dates
 let learnersData = []; //results
+
+
+
+// Loop through each submission next...
+for (let submission of submissions) {
+    const assignment = assignmentGroup.assignments.find(a => a.id === submission.assignment_id);
+    if (!assignment) {
+      console.log("No matching assignment found for submission ID:", submission.assignment_id);
+      continue; //if no matching assignment is found skip to next submission
+    }
