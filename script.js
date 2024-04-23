@@ -148,7 +148,7 @@ function getLearnerData(course, assignmentGroup, submissions) {
                 return; // Skip this iteration
             }
 
-            // Check if the assignment due date has passed
+            // see if assignment due date has passed
             if (new Date(assignment.due_at) > currentDate) {
                 console.log(`Assignment ${assignment.id} is not due yet.`);
                 return; // Skip this iteration if the assignment isn't due yet
@@ -164,4 +164,10 @@ function getLearnerData(course, assignmentGroup, submissions) {
                     totalWeightedPossible: 0
                 };
                 learnersData.push(learnerData);
+            }
+            // Figure out the score and make changes if it was turned in late.
+            let score = submission.submission.score;
+            const pointsPossible = assignment.points_possible;
+            if (new Date(submission.submission.submitted_at) > new Date(assignment.due_at)) {
+                score -= pointsPossible * 0.1; // Deduct 10% for late submission
             }
