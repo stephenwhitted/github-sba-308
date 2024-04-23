@@ -122,3 +122,8 @@ function getLearnerData(course, assignmentGroup, submissions) {
                 console.log(`No matching assignment found for submission ID: ${submission.assignment_id}`);
                 return; // skip
             }
+            // assignment due date passed?
+            if (new Date(assignment.due_at) > currentDate) {
+                console.log(`Assignment ${assignment.id} is not due yet.`);
+                return; // Skip if assignment due date isn't right now
+            }
