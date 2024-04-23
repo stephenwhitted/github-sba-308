@@ -104,83 +104,73 @@ console.log(result);
 
 *
 */
-function getLearnerData(course, assignmentGroup, submissions) {
-    let learnersData = []; //push data into this array
+function getLearnerData() {
+    const CourseInfo = { id: 451, name: "Introduction to JavaScript" };
+    const AssignmentGroup = {
+        id: 12345, name: "Fundamentals of JavaScript", course_id: 451, group_weight: 25,
+        assignments: [
+            { id: 1, name: "Declare a Variable", due_at: "2023-01-25", points_possible: 50 },
+            { id: 2, name: "Write a Function", due_at: "2023-02-27", points_possible: 150 },
+            { id: 3, name: "Code the World", due_at: "3156-11-15", points_possible: 500 }
+        ]
+    };
+    const LearnerSubmissions = [
+        { learner_id: 125, assignment_id: 1, submission: { submitted_at: "2023-01-25", score: 47 } },
+        { learner_id: 125, assignment_id: 2, submission: { submitted_at: "2023-02-12", score: 150 } },
+        { learner_id: 125, assignment_id: 3, submission: { submitted_at: "2023-01-25", score: 400 } },
+        { learner_id: 132, assignment_id: 1, submission: { submitted_at: "2023-01-24", score: 39 } },
+        { learner_id: 132, assignment_id: 2, submission: { submitted_at: "2023-03-07", score: 140 } }
+    ];
+
+    let learnersData = [];
 
     try {
-        // if statement to check assignment group's course ID
-        if (course.id !== assignmentGroup.course_id) {
-            throw new Error("Assignment group's course ID is not a match for the course ID.");
-        }
-        const currentDate = new Date(); 
-
-        // Loop through each submission
-        submissions.forEach(submission => {
-            // locate the correct assignment using Array.find
-            const assignment = assignmentGroup.assignments.find(a => a.id === submission.assignment_id);
-            if (!assignment) {
-                console.log(`No matching assignment found for submission ID: ${submission.assignment_id}`);
-                return; // skip
-            }
-            // assignment due date passed?
-            if (new Date(assignment.due_at) > currentDate) {
-                console.log(`Assignment ${assignment.id} is not due yet.`);
-                return; //if assignment due date isn't right now skip
-            }
-            User
-function getLearnerData(course, assignmentGroup, submissions) {
-    let learnersData = []; // Use `let` because we will be pushing data into this array
-
-    try {
-        // Validate the assignment group's course ID using an if statement
-        if (course.id !== assignmentGroup.course_id) {
-            throw new Error("Assignment group's course ID does not match the course ID.");
+        if (CourseInfo.id !== AssignmentGroup.course_id) {
+            throw new Error("Course ID mismatch.");
         }
 
-        const currentDate = new Date(); // Use `const` for immutable date value
-
-        // Loop through each submission
-        submissions.forEach(submission => {
-            // Use Array.find to locate the correct assignment
-            const assignment = assignmentGroup.assignments.find(a => a.id === submission.assignment_id);
+        LearnerSubmissions.forEach(submission => {
+            const assignment = AssignmentGroup.assignments.find(a => a.id === submission.assignment_id);
             if (!assignment) {
-                console.log(`No matching assignment found for submission ID: ${submission.assignment_id}`);
-                return; // Skip this iteration
+                console.log(`No matching assignment found for ID: ${submission.assignment_id}`);
+                return;
+            } else if (new Date(assignment.due_at) > new Date()) {
+                console.log(`Assignment ${assignment.id} not due yet`);
+                return;
             }
 
-            // see if assignment due date has passed
-            if (new Date(assignment.due_at) > currentDate) {
-                console.log(`Assignment ${assignment.id} is not due yet.`);
-                return; // Skip this iteration if the assignment isn't due yet
+            let learner = learnersData.find(l => l.id === submission.learner_id);
+            if (!learner) {
+                learner = { id: submission.learner_id, scores: {}, totalPoints: 0, totalPossible: 0 };
+                learnersData.push(learner);
             }
 
-            // locate learner data or create new if not found
-            let learnerData = learnersData.find(ld => ld.id === submission.learner_id);
-            if (!learnerData) {
-                learnerData = {
-                    id: submission.learner_id,
-                    scores: {},
-                    totalWeightedScore: 0,
-                    totalWeightedPossible: 0
-                };
-                learnersData.push(learnerData);
+            let score = submission.score;
+            if (new Date(submission.submitted_at) > new Date(assignment.due_at)) {
+                score *= 0.9; // late penalty
             }
-            // Figure out the score and make changes if it was turned in late.
-            let score = submission.submission.score;
-            const pointsPossible = assignment.points_possible;
-            if (new Date(submission.submission.submitted_at) > new Date(assignment.due_at)) {
-                score -= pointsPossible * 0.1; // Deduct 10% for late submission
-            }
-            // score = percentage(%) of possible points
-            learnerData.scores[assignment.id] = score / pointsPossible;
-            learnerData.totalWeightedScore += score * assignment.group_weight;
-            learnerData.totalWeightedPossible += pointsPossible * assignment.group_weight;
+
+            learner.scores[assignment.id] = score / assignment.points_possible;
+            learner.totalPoints += score;
+            learner.totalPossible += assignment.points_possible;
         });
-              // calculate averages by using .map through learnersData 
-        learnersData = learnersData.map(learner => {
-            learner.avg = learner.totalWeightedScore / learner.totalWeightedPossible;
-            delete learner.totalWeightedScore;
-            delete learner.totalWeightedPossible;
-            return learner;
-        });
-        
+
+        return learnersData.map(learner => ({
+            id: learner.id,
+            avg: learner.totalPoints / learner.totalPossible,
+            scores: learner.scores
+        }));
+    } catch (error) {
+        switch (error.message) {
+            case "Course ID mismatch.":
+                console.error("Validation Error:", error);
+                break;
+            default:
+                console.error("Unexpected Error:", error);
+        }
+        return [];
+    }
+}
+
+const result = getLearnerData();
+console.log("Processed data:", result);
