@@ -112,3 +112,13 @@ function getLearnerData(course, assignmentGroup, submissions) {
         if (course.id !== assignmentGroup.course_id) {
             throw new Error("Assignment group's course ID is not a match for the course ID.");
         }
+        const currentDate = new Date(); 
+
+        // Loop through each submission
+        submissions.forEach(submission => {
+            // locate the correct assignment using Array.find
+            const assignment = assignmentGroup.assignments.find(a => a.id === submission.assignment_id);
+            if (!assignment) {
+                console.log(`No matching assignment found for submission ID: ${submission.assignment_id}`);
+                return; // skip
+            }
