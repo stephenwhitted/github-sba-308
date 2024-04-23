@@ -176,4 +176,11 @@ function getLearnerData(course, assignmentGroup, submissions) {
             learnerData.totalWeightedScore += score * assignment.group_weight;
             learnerData.totalWeightedPossible += pointsPossible * assignment.group_weight;
         });
-            
+              // calculate averages by using .map through learnersData 
+        learnersData = learnersData.map(learner => {
+            learner.avg = learner.totalWeightedScore / learner.totalWeightedPossible;
+            delete learner.totalWeightedScore;
+            delete learner.totalWeightedPossible;
+            return learner;
+        });
+        
