@@ -125,5 +125,43 @@ function getLearnerData(course, assignmentGroup, submissions) {
             // assignment due date passed?
             if (new Date(assignment.due_at) > currentDate) {
                 console.log(`Assignment ${assignment.id} is not due yet.`);
-                return; // Skip if assignment due date isn't right now
+                return; //if assignment due date isn't right now skip
+            }
+            User
+function getLearnerData(course, assignmentGroup, submissions) {
+    let learnersData = []; // Use `let` because we will be pushing data into this array
+
+    try {
+        // Validate the assignment group's course ID using an if statement
+        if (course.id !== assignmentGroup.course_id) {
+            throw new Error("Assignment group's course ID does not match the course ID.");
+        }
+
+        const currentDate = new Date(); // Use `const` for immutable date value
+
+        // Loop through each submission
+        submissions.forEach(submission => {
+            // Use Array.find to locate the correct assignment
+            const assignment = assignmentGroup.assignments.find(a => a.id === submission.assignment_id);
+            if (!assignment) {
+                console.log(`No matching assignment found for submission ID: ${submission.assignment_id}`);
+                return; // Skip this iteration
+            }
+
+            // Check if the assignment due date has passed
+            if (new Date(assignment.due_at) > currentDate) {
+                console.log(`Assignment ${assignment.id} is not due yet.`);
+                return; // Skip this iteration if the assignment isn't due yet
+            }
+
+            // locate learner data or create new if not found
+            let learnerData = learnersData.find(ld => ld.id === submission.learner_id);
+            if (!learnerData) {
+                learnerData = {
+                    id: submission.learner_id,
+                    scores: {},
+                    totalWeightedScore: 0,
+                    totalWeightedPossible: 0
+                };
+                learnersData.push(learnerData);
             }
