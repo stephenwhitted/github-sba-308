@@ -171,3 +171,9 @@ function getLearnerData(course, assignmentGroup, submissions) {
             if (new Date(submission.submission.submitted_at) > new Date(assignment.due_at)) {
                 score -= pointsPossible * 0.1; // Deduct 10% for late submission
             }
+            // score = percentage(%) of possible points
+            learnerData.scores[assignment.id] = score / pointsPossible;
+            learnerData.totalWeightedScore += score * assignment.group_weight;
+            learnerData.totalWeightedPossible += pointsPossible * assignment.group_weight;
+        });
+            
